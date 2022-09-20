@@ -6,16 +6,15 @@ LABEL org.label-schema.name="mpv"
 LABEL org.label-schema.schema-version="1.0"
 LABEL org.label-schema.vcs-url="https://github.com/bbusse/mpv-container"
 
-RUN apk add --no-cache \
-    ffmpeg \
-    mesa-demos \
-    mesa-dri-intel \
-    mpv \
-    pulseaudio \
-    ttf-dejavu \
-    && adduser -u 1000 -D mpv \
-    && mkdir -p /home/mpv/media \
-    && mkdir -p /home/mpv/.config/pulse \
+ENV ARCH="x86_64" \
+    USER="mpv" \
+    APK_ADD="ffmpeg mesa-demos mesa-dri-intel mpv pulseaudio ttf-dejavu" \
+    APK_DEL=""
+
+RUN apk add --no-cache ${APK_ADD} \
+    && adduser -u 1000 -D ${USER} \
+    && mkdir -p /home/${USER}/media \
+    && mkdir -p /home/${USER}/.config/pulse \
     && echo "default-server = unix:/run/user/1000/pulse/native" > /home/mpv/.config/pulse/client.conf \
     && echo "autospawn = no" >> /home/mpv/.config/pulse/client.conf \
     && echo "daemon-binary = /bin/true" >> /home/mpv/.config/pulse/client.conf \
@@ -51,8 +50,8 @@ RUN apk add --no-cache \
     && deluser --remove-home smmsp \
     && deluser --remove-home guest
 
-USER mpv
-WORKDIR /home/mpv/media
+USER ${USER}
+WORKDIR /home/${USER}/media
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]

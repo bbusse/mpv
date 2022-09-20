@@ -1,4 +1,4 @@
-# mpv - mpv in a container
+# mpv - in a container
 ## Build
 ```
 $ git clone https://github.com/bbusse/mpv
